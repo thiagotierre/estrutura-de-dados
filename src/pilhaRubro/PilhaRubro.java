@@ -75,8 +75,6 @@ public class PilhaRubro implements PilhaRN{
 				}
 			}
 			
-			
-							
 			for(int i = temp.length-1; i >=tn; i--) {
 				if(tn<= S.length-1) {
 					temp[i] = S[tn];

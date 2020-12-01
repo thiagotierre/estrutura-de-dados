@@ -52,26 +52,19 @@ public class Pilha2020TESTE {
 	}
 	
 	public static void pilha2() throws Exception {
-		Pilha pilhaArray = new Pilha(1);
-		
-		pilhaArray.push(5);
-		pilhaArray.push(3);
-		System.out.println(pilhaArray.pop());
-		pilhaArray.push(2);
-		pilhaArray.push(8);
-		System.out.println(pilhaArray.pop());
-		System.out.println(pilhaArray.pop());
-		pilhaArray.push(9);
-		pilhaArray.push(1);
-		System.out.println(pilhaArray.pop());
-		pilhaArray.push(7);
-		pilhaArray.push(6);
-		System.out.println(pilhaArray.pop());
-		System.out.println(pilhaArray.pop());
-		pilhaArray.push(4);
-		System.out.println(pilhaArray.pop());
-		System.out.println(pilhaArray.pop());
-		System.out.println(pilhaArray.toString());
+		PilhaRN p = new PilhaRN(1);
+        
+        p.pushR();
+        p.pushR();
+        p.pushN();
+        p.pushN();
+        p.pushN();
+        p.pushR();
+        p.pushN();
+        p.pushN();
+        p.pushN();
+        
+        System.out.println(p);
 	}
 
 }

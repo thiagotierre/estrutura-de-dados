@@ -46,13 +46,13 @@ public class HeapSort implements IFila {
 		return Arrays.stream(fp).count()==0;
 	}
 
-	public void upHeap(int children) { 
-		int father = children/2;
+	public void upHeap(int son) { 
+		int father = son/2;
 		if(father >=1) {
-			if(this.fp[children] > this.fp[father]) {
+			if(this.fp[son] > this.fp[father]) {
 				int aux = this.fp[father];
-				this.fp[father] = this.fp[children];
-				this.fp[children] = aux;
+				this.fp[father] = this.fp[son];
+				this.fp[son] = aux;
 				upHeap(father);
 			}
 		}

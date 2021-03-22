@@ -128,13 +128,13 @@ public class ArvoreAVL implements TADArvore {
 			if(item < aux.getElement()) {
 				aux.setLeftSon(no);
 				no.setFather(aux);
-				verificarBalanceamento(no);
+				checkBalance(no);
 				size++;
 			}
 			else {
 				aux.setRightSon(no);
 				no.setFather(aux);
-				verificarBalanceamento(no);
+				checkBalance(no);
 				size++;
 			}
 		}
@@ -322,129 +322,109 @@ public class ArvoreAVL implements TADArvore {
 	}
 	
 	private void calcFB(No no) {
-		int factor = 0;
-		
-		factor =height(no.getLeftSon()) - height(no.getRightSon());
-		
-//		if((no.getLeftSon()==null) && (no.getRightSon()==null)) {
-//			factor = 0;
-//			
-//		}else if((no.getLeftSon()!=null) && (no.getRightSon()!=null)) {
-//			factor =height(no.getLeftSon()) - height(no.getRightSon());
-//		}else {
-//			if(no.getLeftSon()!=null) {
-//				factor = height(no.getLeftSon())+1;
-//			}else{
-//				factor = height(no.getRightSon())+1;
-//			}
-//		}
-		
-		no.setFb(factor);
-		
+		no.setFb(height(no.getLeftSon()) - height(no.getRightSon()));
 	}
 	
-	public void verificarBalanceamento(No atual) {
-		calcFB(atual);
-		int balanceamento = atual.getFb();
+	
+	//methods AVL
+	public void checkBalance(No current) {
+		calcFB(current);
+		int balance = current.getFb();
 
-		if (balanceamento == 2) {
+		if (balance == 2) {
 
-			if (atual.getLeftSon().getFb() >= 0) {
-				atual = rotacaoDireita(atual);
+			if (current.getLeftSon().getFb() >= 0) {
+				current = rightRotation(current);
 
 			} else {
-				atual = duplaRotacaoEsquerdaDireita(atual);
+				current = doubleRotationLeftRight(current);
 			}
 
-		} else if (balanceamento == - 2) {
+		} else if (balance == -2) {
 
-			if (atual.getRightSon().getFb() <= 0) {
-				atual = rotacaoEsquerda(atual);
+			if (current.getRightSon().getFb() <= 0) {
+				current = leftRotation(current);
 
 			} else {
-				atual = duplaRotacaoDireitaEsquerda(atual);
+				current = doubleRotationRightLeft(current);
 			}
 		}
 
-		if (atual.getFather() != null) {
-			verificarBalanceamento(atual.getFather());
+		if (current.getFather() != null) {
+			checkBalance(current.getFather());
 		} else {
-			this.raiz = atual;
+			this.raiz = current;
 		}
 	}
 	
-	public No rotacaoEsquerda(No inicial) {
+	public No leftRotation(No initial) {
 
-		No direita = inicial.getRightSon();
-		direita.setFather(inicial.getFather());
+		No right = initial.getRightSon();
+		right.setFather(initial.getFather());
 
-		inicial.setRightSon(direita.getLeftSon());
+		initial.setRightSon(right.getLeftSon());
 
-		if (inicial.getRightSon() != null) {
-			inicial.getRightSon().setFather(inicial);
+		if (initial.getRightSon() != null) {
+			initial.getRightSon().setFather(initial);
 		}
 
-		direita.setLeftSon(inicial);
-		inicial.setFather(direita);
+		right.setLeftSon(initial);
+		initial.setFather(right);
 
-		if (direita.getFather() != null) {
+		if (right.getFather() != null) {
 
-			if (direita.getFather().getRightSon() == inicial) {
-				direita.getFather().setRightSon(direita);
+			if (right.getFather().getRightSon() == initial) {
+				right.getFather().setRightSon(right);
 			
-			} else if (direita.getFather().getLeftSon() == inicial) {
-				direita.getFather().setLeftSon(direita);
+			} else if (right.getFather().getLeftSon() == initial) {
+				right.getFather().setLeftSon(right);
 			}
 		}
 
-		calcFB(inicial);
-		calcFB(direita);
+		calcFB(initial);
+		calcFB(right);
 
-		return direita;
+		return right;
 	}
 
-	public No rotacaoDireita(No inicial) {
+	public No rightRotation(No initial) {
 
-		No esquerda = inicial.getLeftSon();
-		esquerda.setFather(inicial.getFather());
+		No left = initial.getLeftSon();
+		left.setFather(initial.getFather());
 
-		inicial.setLeftSon(esquerda.getRightSon());
+		initial.setLeftSon(left.getRightSon());
 
-		if (inicial.getLeftSon() != null) {
-			inicial.getLeftSon().setFather(inicial);
+		if (initial.getLeftSon() != null) {
+			initial.getLeftSon().setFather(initial);
 		}
 
-		esquerda.setRightSon(inicial);
-		inicial.setFather(esquerda);
+		left.setRightSon(initial);
+		initial.setFather(left);
 
-		if (esquerda.getFather() != null) {
+		if (left.getFather() != null) {
 
-			if (esquerda.getFather().getRightSon() == inicial) {
-				esquerda.getFather().setRightSon(esquerda);
+			if (left.getFather().getRightSon() == initial) {
+				left.getFather().setRightSon(left);
 			
-			} else if (esquerda.getFather().getLeftSon() == inicial) {
-				esquerda.getFather().setLeftSon(esquerda);
+			} else if (left.getFather().getLeftSon() == initial) {
+				left.getFather().setLeftSon(left);
 			}
 		}
 
-		calcFB(inicial);
-		calcFB(esquerda);
+		calcFB(initial);
+		calcFB(left);
 
-		return esquerda;
+		return left;
 	}
 
-	public No duplaRotacaoEsquerdaDireita(No inicial) {
-		inicial.setLeftSon(rotacaoEsquerda(inicial.getLeftSon()));
-		return rotacaoDireita(inicial);
+	public No doubleRotationLeftRight(No initial) {
+		initial.setLeftSon(leftRotation(initial.getLeftSon()));
+		return rightRotation(initial);
 	}
 
-	public No duplaRotacaoDireitaEsquerda(No inicial) {
-		inicial.setRightSon(rotacaoDireita(inicial.getRightSon()));
-		return rotacaoEsquerda(inicial);
+	public No doubleRotationRightLeft(No initial) {
+		initial.setRightSon(rightRotation(initial.getRightSon()));
+		return leftRotation(initial);
 	}
-	
-//	private void setBalanceamento(No no) {
-//		no.setFb(height(no.getRightSon()) - height(no.getLeftSon()));
-//	}
 
 }

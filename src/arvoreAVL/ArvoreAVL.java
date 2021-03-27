@@ -2,7 +2,6 @@ package arvoreAVL;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class ArvoreAVL implements TADArvore {
 	
@@ -63,25 +62,11 @@ public class ArvoreAVL implements TADArvore {
 	}
 
 	@Override
-	public Iterator<Integer> elements() {
-		List<Integer> objs = new ArrayList<Integer>();
-		while(children(getRaiz()).hasNext())
-			objs.add(children(getRaiz()).next().getElement());
-		Iterator<Integer> ite = objs.iterator();
-		return ite;
-	}
-
-	@Override
 	public Iterator<No> children(No no) {
 		ArrayList<No> chil = new ArrayList<No>();
 		chil.add(no.getLeftSon());
 		chil.add(no.getRightSon());
 		return chil.iterator();
-	}
-
-	@Override
-	public Iterator<No> nos() {
-		return (root()==null)?null:inOrder(root());
 	}
 
 	@Override
@@ -113,91 +98,6 @@ public class ArvoreAVL implements TADArvore {
 	public No replace(No no, int item) {
         no.setElement(item);
 		return no;
-	}
-
-	@Override
-	public void insert(int item) {
-		No no = new No(item);
-		
-		if(isEmpty()) {
-			setRaiz(no);
-			size++;
-		}
-		else {
-			No aux = search(item);
-			if(item < aux.getElement()) {
-				aux.setLeftSon(no);
-				no.setFather(aux);
-				checkBalance(no);
-				size++;
-			}
-			else {
-				aux.setRightSon(no);
-				no.setFather(aux);
-				checkBalance(no);
-				size++;
-			}
-		}
-
-	}
-
-	@Override
-	public void delete(No no) {
-		No aux = search(no.getElement());
-		if(aux.getLeftSon()==null && aux.getRightSon()==null) {
-			if(aux.getElement() < aux.getFather().getElement()) {
-				aux.getFather().setLeftSon(null);
-				aux.setFather(null);
-			} else {
-				aux.getFather().setRightSon(null);
-				aux.setFather(null);
-			}
-		}
-		
-		if(aux.getLeftSon()!=null && aux.getRightSon()==null) {
-			aux.getLeftSon().setFather(aux.getFather());
-			aux.getFather().setLeftSon(aux.getLeftSon());
-			aux.setLeftSon(null);
-			aux.setFather(null);
-		}
-		
-		if(aux.getLeftSon()==null && aux.getRightSon()!=null) {
-			aux.getRightSon().setFather(aux.getFather());
-			aux.getFather().setRightSon(aux.getRightSon());
-			aux.setRightSon(null);
-			aux.setFather(null);
-		}
-		
-		if(aux.getLeftSon()!=null && aux.getRightSon()!=null) {
-			No lastLeftSon = aux.getRightSon();
-			while(lastLeftSon.getLeftSon()!=null) {
-				lastLeftSon = lastLeftSon.getLeftSon();
-			}
-			//sucessor
-			//lastLeftSon.getLeftSon();
-			if(aux.getElement() < aux.getFather().getElement()) {
-				lastLeftSon.setFather(aux.getFather());
-				lastLeftSon.setLeftSon(aux.getLeftSon());
-				lastLeftSon.setRightSon(aux.getRightSon());
-				aux.getFather().setLeftSon(lastLeftSon.getLeftSon());
-				aux.setLeftSon(null);
-				aux.setRightSon(null);
-				aux.setFather(null);
-				
-			} else {
-				
-				lastLeftSon.setFather(aux.getFather());
-				lastLeftSon.setLeftSon(aux.getLeftSon());
-				lastLeftSon.setRightSon(aux.getRightSon());
-				aux.getFather().setRightSon(lastLeftSon.getLeftSon());
-				aux.setLeftSon(null);
-				aux.setRightSon(null);
-				aux.setFather(null);
-				
-			}
-			
-		}
-
 	}
 
 	@Override
@@ -321,12 +221,38 @@ public class ArvoreAVL implements TADArvore {
 		return (no.getRightSon() != null);
 	}
 	
+	/*-------------------- methods AVL ---------------------------------------------------*/
+	
+	@Override
+	public void insert(int item) {
+		No no = new No(item);
+		
+		if(isEmpty()) {
+			setRaiz(no);
+			size++;
+		}
+		else {
+			No aux = search(item);
+			if(item < aux.getElement()) {
+				aux.setLeftSon(no);
+				no.setFather(aux);
+				checkBalance(no);
+				size++;
+			}
+			else {
+				aux.setRightSon(no);
+				no.setFather(aux);
+				checkBalance(no);
+				size++;
+			}
+		}
+
+	}
+	
 	private void calcFB(No no) {
 		no.setFb(height(no.getLeftSon()) - height(no.getRightSon()));
 	}
 	
-	
-	//methods AVL
 	public void checkBalance(No current) {
 		calcFB(current);
 		int balance = current.getFb();
@@ -425,6 +351,86 @@ public class ArvoreAVL implements TADArvore {
 	public No doubleRotationRightLeft(No initial) {
 		initial.setRightSon(rightRotation(initial.getRightSon()));
 		return leftRotation(initial);
+	}
+	
+	public void remove(int element) {
+		removeAVL(this.raiz, element);
+	}
+
+	public void removeAVL(No current, int element) {
+		if (current == null) {
+			return;
+
+		} else {
+
+			if (current.getElement() > element) {
+				removeAVL(current.getLeftSon(), element);
+
+			} else if (current.getElement() < element) {
+				removeAVL(current.getRightSon(), element);
+
+			} else if (current.getElement() == element) {
+				removeNodeFound(current);
+			}
+		}
+	}
+
+	public void removeNodeFound(No no) {
+		No r;
+
+		if (no.getLeftSon() == null || no.getRightSon() == null) {
+
+			if (no.getFather() == null) {
+				this.raiz = null;
+				no = null;
+				return;
+			}
+			r = no;
+
+		} else {
+			r = sucessor(no);
+			no.setElement(r.getElement());
+		}
+
+		No p;
+		if (r.getLeftSon() != null) {
+			p = r.getLeftSon();
+		} else {
+			p = r.getRightSon();
+		}
+
+		if (p != null) {
+			p.setFather(r.getFather());
+		}
+
+		if (r.getFather() == null) {
+			this.raiz = p;
+		} else {
+			if (r == r.getFather().getLeftSon()) {
+				r.getFather().setLeftSon(p);
+			} else {
+				r.getFather().setRightSon(p);
+			}
+			checkBalance(r.getFather());
+		}
+		r = null;
+	}
+	
+	public No sucessor(No q) {
+		if (q.getRightSon() != null) {
+			No r = q.getRightSon();
+			while (r.getLeftSon() != null) {
+				r = r.getLeftSon();
+			}
+			return r;
+		} else {
+			No p = q.getFather();
+			while (p != null && q == p.getRightSon()) {
+				q = p;
+				p = q.getFather();
+			}
+			return p;
+		}
 	}
 
 }

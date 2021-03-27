@@ -1,4 +1,4 @@
-package arvoreAVL;
+package arvoreRN;
 
 import java.util.Iterator;
 
